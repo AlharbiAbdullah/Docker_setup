@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  #1 pg admin 
+  pgadmin:
+    image: dpage/pgadmin4:latest 
+    ports:
+      - "81:80" 
+    environment:
+       PGADMIN_DEFAULT_EMAIL: "alharbi.s.abdullah@gmail.com"
+       PGADMIN_DEFAULT_PASSWORD: "admin"
+    volumes:
+      - pgdata:/var/lib/pgadmin
+
+  #2 Postgresql 
+  postgresql:
+    image: postgres:12.4
+    ports:
+      - 5432:5432 
+    environment:
+       POSTGRES_USER: 'Abdullah'
+       POSTGRES_PASSWORD: 'abdullah'
+       POSTGRES_DB: 'docker_data' 
+       PGDATA: /var/lib/postgresql/data 
+    volumes:
+      - ./postgres/postgresql-data:/var/lib/postgresql/data 
+    
+  #3 Jupyter lab 
+  jupyterlab:
+    build:
+      context: ./jupyter 
+      dockerfile: Dockerfile 
+    ports:
+      - 8888:8888 
+    volumes:
+      - ./jupyter:/code 
+    entrypoint: 
+      jupyter lab --ip='0.0.0.0' --port=8888 --no-browser --allow-root --NotebookApp.token=''
+
+# Volume declaration 
+volumes:
+  pgdata:
+
